@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pdm2/routes.dart';
 
 class Usuarios extends StatelessWidget {
   const Usuarios({Key? key}) : super(key: key);
@@ -38,7 +39,7 @@ class Usuarios extends StatelessWidget {
                   color: Color.fromRGBO(169, 131, 69, 1)),
             ),
             const Text(
-              'usuário',
+              'Usuário',
               style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.w200,
@@ -51,7 +52,8 @@ class Usuarios extends StatelessWidget {
                 runSpacing: 20,
                 children: [
                   ElevatedButton(
-                    onPressed: () => Navigator.pushNamed(context, '/cadastro-usuario'),
+                    onPressed: () => Navigator.of(context)
+                        .pushNamed(RouterGenerator.cadastrarUsuarioPage),
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
                       backgroundColor: Colors.white,
@@ -60,7 +62,7 @@ class Usuarios extends StatelessWidget {
                     child: const Padding(
                       padding: EdgeInsets.only(top: 15, bottom: 15),
                       child: Text(
-                        'cadastrar usuário',
+                        'Cadastrar usuário',
                         style: TextStyle(
                           color: Color.fromRGBO(169, 131, 69, 1),
                           fontSize: 24,
@@ -69,7 +71,8 @@ class Usuarios extends StatelessWidget {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => Navigator.pushNamed(context, '/listagem-usuarios'),
+                    onPressed: () => Navigator.of(context)
+                        .pushNamed(RouterGenerator.listagemUsuarioPage),
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
                       backgroundColor: Colors.white,
@@ -78,7 +81,7 @@ class Usuarios extends StatelessWidget {
                     child: const Padding(
                       padding: EdgeInsets.only(top: 15, bottom: 15),
                       child: Text(
-                        'listagem de usuários',
+                        'Listagem de usuários',
                         style: TextStyle(
                           color: Color.fromRGBO(169, 131, 69, 1),
                           fontSize: 24,

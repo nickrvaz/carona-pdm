@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pdm2/routes.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({Key? key}) : super(key: key);
@@ -56,7 +57,8 @@ class _AdminPageState extends State<AdminPage> {
                 runSpacing: 20,
                 children: [
                   ElevatedButton(
-                    onPressed: () => Navigator.pushNamed(context, '/usuarios'),
+                    onPressed: () => Navigator.of(context)
+                        .pushNamed(RouterGenerator.usuarioPage),
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
                       backgroundColor: Colors.white,
@@ -65,7 +67,7 @@ class _AdminPageState extends State<AdminPage> {
                     child: const Padding(
                       padding: EdgeInsets.only(top: 15, bottom: 15),
                       child: Text(
-                        'usuários',
+                        'Usuários',
                         style: TextStyle(
                           color: Color.fromRGBO(169, 131, 69, 1),
                           fontSize: 24,
@@ -83,7 +85,7 @@ class _AdminPageState extends State<AdminPage> {
                     child: const Padding(
                       padding: EdgeInsets.only(top: 15, bottom: 15),
                       child: Text(
-                        'carros',
+                        'Carros - Em Breve',
                         style: TextStyle(
                           color: Color.fromRGBO(169, 131, 69, 1),
                           fontSize: 24,
@@ -101,7 +103,7 @@ class _AdminPageState extends State<AdminPage> {
                     child: const Padding(
                       padding: EdgeInsets.only(top: 15, bottom: 15),
                       child: Text(
-                        'caronas',
+                        'Caronas - Em Breve',
                         style: TextStyle(
                           color: Color.fromRGBO(169, 131, 69, 1),
                           fontSize: 24,

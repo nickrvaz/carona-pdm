@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:pdm2/blocs/usuario.bloc.dart';
+import 'package:pdm2/routes.dart';
 
-class CadastroUsuario extends StatelessWidget {
-  const CadastroUsuario({Key? key}) : super(key: key);
+class CadastroUsuario extends StatefulWidget {
+  const CadastroUsuario({super.key});
+
+  @override
+  State<CadastroUsuario> createState() => _CadastroUsuarioState();
+}
+
+class _CadastroUsuarioState extends State<CadastroUsuario> {
+  TextEditingController nomeController = TextEditingController();
+  TextEditingController raController = TextEditingController();
+  TextEditingController senhaController = TextEditingController();
+  UsuarioBloc usuarioBloc = UsuarioBloc();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +39,6 @@ class CadastroUsuario extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
               'Carona Estudantil',
@@ -38,7 +49,7 @@ class CadastroUsuario extends StatelessWidget {
                   color: Color.fromRGBO(169, 131, 69, 1)),
             ),
             const Text(
-              'usuário',
+              'Novo usuário',
               style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.w200,
@@ -52,11 +63,12 @@ class CadastroUsuario extends StatelessWidget {
                   runSpacing: 20,
                   children: [
                     TextField(
+                      controller: nomeController,
                       decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
-                            borderSide: const BorderSide(
-                                width: 1, color: Colors.white), //<-- SEE HERE
+                            borderSide:
+                                const BorderSide(width: 1, color: Colors.white),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
@@ -67,15 +79,16 @@ class CadastroUsuario extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
-                          hintText: "nome:",
+                          hintText: "Nome:",
                           fillColor: Colors.white),
                     ),
                     TextField(
+                      controller: raController,
                       decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
-                            borderSide: const BorderSide(
-                                width: 1, color: Colors.white), //<-- SEE HERE
+                            borderSide:
+                                const BorderSide(width: 1, color: Colors.white),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
@@ -89,11 +102,15 @@ class CadastroUsuario extends StatelessWidget {
                           fillColor: Colors.white),
                     ),
                     TextField(
+                      controller: senhaController,
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
                       decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
-                            borderSide: const BorderSide(
-                                width: 1, color: Colors.white), //<-- SEE HERE
+                            borderSide:
+                                const BorderSide(width: 1, color: Colors.white),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
@@ -103,15 +120,23 @@ class CadastroUsuario extends StatelessWidget {
                               color: Color.fromRGBO(169, 131, 69, 1),
                               fontWeight: FontWeight.bold,
                               fontSize: 18),
-                          hintText: "senha:",
+                          hintText: "Senha:",
                           fillColor: Colors.white),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         ElevatedButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/usuarios'),
+                          onPressed: () {
+                            _salvarUsuario(() {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text("Usuário criado com sucesso"),
+                              ));
+                              Navigator.of(context)
+                                  .pushNamed(RouterGenerator.usuarioPage);
+                            });
+                          },
                           style: ElevatedButton.styleFrom(
                             shape: const StadiumBorder(),
                             backgroundColor:
@@ -120,26 +145,7 @@ class CadastroUsuario extends StatelessWidget {
                           child: const Padding(
                             padding: EdgeInsets.only(top: 15, bottom: 15),
                             child: Text(
-                              'excluir',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                              ),
-                            ),
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/usuarios'),
-                          style: ElevatedButton.styleFrom(
-                            shape: const StadiumBorder(),
-                            backgroundColor:
-                                const Color.fromRGBO(169, 131, 69, 1),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.only(top: 15, bottom: 15),
-                            child: Text(
-                              'salvar',
+                              'Salvar',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
@@ -157,5 +163,13 @@ class CadastroUsuario extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _salvarUsuario(Function callback) async {
+    String nome = nomeController.text;
+    String senha = senhaController.text;
+    String ra = raController.text;
+    usuarioBloc
+        .criarUsuario({'nome': nome, 'senha': senha, 'RA': ra}, callback);
   }
 }

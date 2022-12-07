@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:pdm2/pages/admin.page.dart';
-import 'package:pdm2/pages/cadastro-usuario.page.dart';
-import 'package:pdm2/pages/editar-usuario.page.dart';
+import 'package:hive/hive.dart';
 import 'package:pdm2/pages/login.page.dart';
-import 'package:pdm2/pages/listagem-usuarios.page.dart';
-import 'package:pdm2/pages/usuarios.page.dart';
+import 'package:pdm2/routes.dart';
+import 'package:path_provider/path_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final appDocumentDirectory = await getApplicationDocumentsDirectory();
+  Hive.init(appDocumentDirectory.path);
+  await Hive.openBox('auth');
   runApp(const MyApp());
 }
 
@@ -16,19 +18,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      routes: {
-        '/login': (context) => LoginPage(),
-        '/editar-usuario': (context) => Editar(),
-        '/cadastro-usuario': (context) => CadastroUsuario(),
-        '/listagem-usuarios': (context) => ListagemUsuarios(),
-        '/usuarios': (context) => Usuarios(),
-        '/admin': (context) => AdminPage(),
-      },
+      onGenerateTitle: (context) => 'If Carona',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      initialRoute: RouterGenerator.homePage,
+      onGenerateRoute: RouterGenerator.generateRoute,
     );
   }
 }

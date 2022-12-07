@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:pdm2/routes.dart';
+import 'package:pdm2/utils/request.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -8,6 +13,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController raController = TextEditingController();
+  TextEditingController senhaController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,25 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                   runSpacing: 20,
                   children: [
                     TextField(
-                      decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide:
-                                const BorderSide(width: 1, color: Colors.white),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                          filled: true,
-                          hintStyle: const TextStyle(
-                            color: Color.fromRGBO(169, 131, 69, 1),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                          hintText: "nome:",
-                          fillColor: Colors.white),
-                    ),
-                    TextField(
+                      controller: raController,
                       decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
@@ -94,6 +83,10 @@ class _LoginPageState extends State<LoginPage> {
                           fillColor: Colors.white),
                     ),
                     TextField(
+                      controller: senhaController,
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
                       decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
@@ -108,15 +101,26 @@ class _LoginPageState extends State<LoginPage> {
                               color: Color.fromRGBO(169, 131, 69, 1),
                               fontWeight: FontWeight.bold,
                               fontSize: 18),
-                          hintText: "senha:",
+                          hintText: "Senha:",
                           fillColor: Colors.white),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/admin'),
+                          onPressed: () async {
+                            _doLogin(context, (bool erro) {
+                              if (erro) {
+                                final scaffold = ScaffoldMessenger.of(context);
+                                scaffold.showSnackBar(const SnackBar(
+                                  content: Text('RA ou senha incorretos'),
+                                ));
+                                return;
+                              }
+                              Navigator.of(context)
+                                  .pushNamed(RouterGenerator.adminPage);
+                            });
+                          },
                           style: ElevatedButton.styleFrom(
                             shape: const StadiumBorder(),
                             backgroundColor:
@@ -143,5 +147,20 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  void _doLogin(BuildContext context, Function callback) async {
+    String senha = senhaController.text;
+    String ra = raController.text;
+    final response = await Requester.doPostRequest(
+        'http://4.204.221.228:3001/login', {'senha': senha, 'RA': ra}, null);
+    var box = Hive.box('auth');
+    Map<String, dynamic> body = jsonDecode(response.body);
+    if (body['token'] != null) {
+      box.put('token', "Bearer ${body['token']}");
+      callback(false);
+      return;
+    }
+    callback(true);
   }
 }
